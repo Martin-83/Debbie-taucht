@@ -72,4 +72,5 @@ if button:
     st.balloons()
 
 
-
+st.divider()
+st.caption("Erstellt von Martin mit ❤️ · 06.11.2026")
