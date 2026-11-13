@@ -73,4 +73,4 @@ if button:
 
 
 st.divider()
-st.caption("Erstellt von Martin mit ❤️ · 06.11.2026")
+st.caption("Erstellt von Martin mit ❤️ · 13.11.2026")
