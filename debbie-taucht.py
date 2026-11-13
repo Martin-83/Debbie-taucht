@@ -65,7 +65,6 @@ with st.expander("T-im-Kreis"):
 with st.expander("Beispiel 1: Maximum Operation Depth (MOD)"):     
     st.markdown("Du planst ein Nitrox 50 als Dekogas zu verwenden und möchtest die maximal mögliche Tiefe (MOD) wissen, in der du es verwenden darfst.")
 
-st.divider()
 st.write("Alles klar?")
 button = st.button("Ja!")
 if button:
