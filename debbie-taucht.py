@@ -18,6 +18,18 @@ if modus == "Maximum Operation Depth (MOD)":
     st.write("- 1.4 Bar für den eigentlichen Tauchgang")
     st.write("Alles klar? Dann lass uns losrechnen!")
 
+    col1, col2 = st.columns(2)
+
+    with col1:
+        partialdruck = st.number_input("Zulässiger Partialdruck (bar):", min_value=0.0, max_value=3.0, value=1.4, step=0.1, format="%.1f")
+
+    with col2:
+        sauerstoffanteil = st.number_input("Sauerstoffanteil [-]:", min_value=0.0, max_value=1.0, value=0.21, step=0.01, format="%.2f" )
+
+    umgebungsdruck = partialdruck / sauerstoffanteil
+    mod = (umgebungsdruck - 1) * 10
+    st.metric("MOD:", f"{mod:.1f} m")                                       
+
 elif modus == "Best-Mix":
     st.write("Text und Rechner für den Best-Mix")
 else:
@@ -69,7 +81,6 @@ st.write("Alles klar?")
 button = st.button("Ja!")
 if button:
     st.balloons()
-
 
 st.divider()
 st.caption("Erstellt von Martin mit ❤️ · 13.11.2026")
