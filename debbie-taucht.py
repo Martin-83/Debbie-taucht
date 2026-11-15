@@ -1,4 +1,5 @@
 import streamlit as st
+import math
 
 st.title("Debbie taucht. ❤️")
 st.write("Diese App ist ein kleines Geschenk für meinen lieblings 🍑🐟. Sie beinhaltet die wichtigsten theoretischen Punkte, die man für AN/DP wissen muss.")
@@ -9,11 +10,13 @@ st.divider()
 
 # Rechner-Bereich
 st.markdown("### Gas-Berechnungen")
-modus = st.radio("Was möchtest du berechnen?", ["Maximum Operation Depth (MOD)", "Best-Mix", "Partialdruck eines Gases"], horizontal=True)
+modus = st.radio("Was möchtest du berechnen?", [
+                 "Maximum Operation Depth (MOD)", "Best-Mix", "Partialdruck eines Gases"], horizontal=True)
 
 if modus == "Maximum Operation Depth (MOD)":
     st.write("Die MOD gibt dir an, bis zu welcher Tiefe du ein bestimmtes Gas verwenden kannst. Die Grenze wird hierbei durch den zulässigen Sauerstoffpartialdruck p<sub>g</sub> gebildet. Je höher der Sauerstoffanteil f<sub>g</sub> in deinem Gas, umso schneller wird der Grenzwert erreicht. ", unsafe_allow_html=True)
-    st.write("Typischerweise werden zwei Grenzwerte für den Partialdruck herangezogen:")
+    st.write(
+        "Typischerweise werden zwei Grenzwerte für den Partialdruck herangezogen:")
     st.write("- 1.6 Bar für die Dekompression")
     st.write("- 1.4 Bar für den eigentlichen Tauchgang")
     st.write("Alles klar? Dann lass uns losrechnen!")
@@ -21,24 +24,52 @@ if modus == "Maximum Operation Depth (MOD)":
     col1, col2 = st.columns(2)
 
     with col1:
-        partialdruck = st.number_input("Zulässiger Partialdruck (bar):", min_value=0.0, max_value=3.0, value=1.4, step=0.1, format="%.1f")
+        partialdruck = st.number_input(
+            "Zulässiger Partialdruck (bar):", min_value=0.0, max_value=3.0, value=1.4, step=0.1, format="%.1f")
 
     with col2:
-        sauerstoffanteil = st.number_input("Sauerstoffanteil [-]:", min_value=0.0, max_value=1.0, value=0.21, step=0.01, format="%.2f" )
+        sauerstoffanteil = st.number_input(
+            "Sauerstoffanteil [-]:", min_value=0.0, max_value=1.0, value=0.21, step=0.01, format="%.2f")
 
     umgebungsdruck = partialdruck / sauerstoffanteil
     mod = (umgebungsdruck - 1) * 10
-    st.metric("MOD:", f"{mod:.1f} m")                                       
+    st.metric("MOD:", f"{mod:.1f} m")
 
 elif modus == "Best-Mix":
     st.write("Text und Rechner für den Best-Mix")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        partialdruck = st.number_input("Gewünschter Partialdruck (bar):",
+                                       min_value=0.0, max_value=3.0, value=1.4, step=0.1, format="%.1f")
+
+    with col2:
+        zieltiefe = st.number_input(
+            "Zieltiefe (m):", min_value=0, value=30, step=1)
+
+    best_mix = partialdruck / ((zieltiefe / 10) + 1)
+    best_mix_prozent = min(math.floor(round(best_mix * 100, 6)), 100)
+    best_mix_dezimal = best_mix_prozent / 100
+
+    st.metric(
+        "Best-Mix:", f"{best_mix_dezimal:.2f} = {best_mix_prozent} % Sauerstoff")
+
 else:
     st.write("Text und Rechner für den Partialdruck")
 
+    col1, col2 = st.columns(2)
 
+    with col1:
+        sauerstoffanteil = st.number_input(
+            "Sauerstoffanteil [-]:", min_value=0.0, max_value=100.0, value=0.21, step=0.01, format="%.2f")
 
+    with col2:
+        tiefe = st.number_input("Tiefe [m]:", min_value=0, value=30, step=1)
 
+    partialdruck = sauerstoffanteil * ((tiefe / 10) + 1)
 
+    st.metric("Sauerstoff-Partialdruck:", f"{partialdruck:.2f} bar")
 
 
 st.divider()
@@ -49,32 +80,33 @@ st.write("Du möchtest mehr wissen?")
 with st.expander("T-im-Kreis"):
     col1, col2 = st.columns(2)
 
-    with(col1):
+    with (col1):
         st.markdown("##### T-im-Kreis")
         st.markdown("Für die Berechnungen verwendet man am einfachsten das **T-im-Kreis**. Wie es der Name schon sagt, zeichnet man ein T in einem Kreis. Danach fügt man die Formelzeichen ein. ")
         st.html("<br>")
         st.markdown("Diese sind:")
-        
-    with(col2):
+
+    with (col2):
         st.image("t-im-kreis.png", use_container_width=True)
 
-    with(col1):
-        st.markdown("- p<sub>g</sub> = Partialdruck des Gases (bar)", unsafe_allow_html=True)
-        st.markdown("- f<sub>g</sub> = Anteil des Gases (Dezimalbruch)", unsafe_allow_html=True)
+    with (col1):
+        st.markdown("- p<sub>g</sub> = Partialdruck des Gases (bar)",
+                    unsafe_allow_html=True)
+        st.markdown(
+            "- f<sub>g</sub> = Anteil des Gases (Dezimalbruch)", unsafe_allow_html=True)
         st.markdown("- p = Umgebungsdruck (bar)", unsafe_allow_html=True)
-    
-    with(col2):
+
+    with (col2):
         st.info('''**Eselsbrücke:**   
         ":orange[**P**]anzer:orange[**g**]renadiere :orange[**f**]ahren :orange[**g**]erne :orange[**P**]anzer."
         ''')
 
-    
     st.markdown("##### Und wie verwendet man das Ganze nun?")
     st.write("Im Prinzip ist es ganz einfach: Die gesuchte Grösse deckst du mit deinem Finger ab, dann ergibt sich eine Formel. Der horizontale Strich entspricht hierbei einer Division, der vertikale einer Multiplikation.")
     st.write("Machen wir ein paar Beispiele: Möchtest du z.B. den Partialdruck p<sub>g</sub> wissen, so deckst du diesen ab. Daraus resultiert die Formel f<sub>g</sub> x p. Möchtest du den Umgebungsdruck wissen, deckst du p ab. Dann erhältst du p<sub>g</sub> / f<sub>g</sub>.", unsafe_allow_html=True)
 
-    
-with st.expander("Beispiel 1: Maximum Operation Depth (MOD)"):     
+
+with st.expander("Beispiel 1: Maximum Operation Depth (MOD)"):
     st.markdown("Du planst ein Nitrox 50 als Dekogas zu verwenden und möchtest die maximal mögliche Tiefe (MOD) wissen, in der du es verwenden darfst.")
 
 st.write("Alles klar?")
@@ -83,4 +115,4 @@ if button:
     st.balloons()
 
 st.divider()
-st.caption("Erstellt von Martin mit ❤️ · 13.11.2026")
+st.caption("Erstellt von Martin mit ❤️ · 15.11.2026")
